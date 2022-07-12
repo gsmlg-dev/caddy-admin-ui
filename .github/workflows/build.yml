@@ -1,0 +1,51 @@
+name: build-caddy-admin-ui
+on:
+  push:
+    branches:
+      - dev
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v2
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: ⚙️ Setup install
+        run: npm config set legacy-peer-deps true
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+          working-directory: "web"
+          install-command: npm install
+
+      - name: 🏗 Run build script
+        working-directory: "web"
+        run: npm run build
+      
+      - name: 📦 Move build
+        run: |
+          mkdir main
+          cp -r web/build main/
+          cp caddy_admin_ui.go go.mod go.sum README.md main/
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+          branch: main # The branch the action should deploy to.
+          folder: "main" # The folder the action should deploy.
+          token: ${{ secrets.ACCESS_TOKEN }}
+
