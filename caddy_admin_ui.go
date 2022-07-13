@@ -5,7 +5,6 @@ import (
 	"embed"
 	"fmt"
 	"io/fs"
-	weakrand "math/rand"
 	"mime"
 	"net/http"
 	"net/url"
@@ -30,7 +29,6 @@ var compileUnixTime = "1657605601"
 
 func init() {
 	httpcaddyfile.RegisterHandlerDirective(DirectiveName, parseCaddyfile)
-	weakrand.Seed(time.Now().UnixNano())
 
 	caddy.RegisterModule(CaddyAdminUI{})
 }
@@ -62,11 +60,13 @@ func (adminUI *CaddyAdminUI) Provision(ctx caddy.Context) error {
 
 	adminUI.SuffixNames = []string{"html", "htm", "txt"}
 
+	files, err := getAllFilenames(&buildFs, "build")
+	adminUI.logger.Debug("improper path escape",
+		zap.Strings("request_path", files),
+		zap.Error(err))
+
 	return nil
 }
-
-//go:embed build/*
-var buildFs embed.FS
 
 func (adminUI *CaddyAdminUI) ServeHTTP(w http.ResponseWriter, r *http.Request, next caddyhttp.Handler) error {
 	repl := r.Context().Value(caddy.ReplacerCtxKey).(*caddy.Replacer)
@@ -88,14 +88,15 @@ func (adminUI *CaddyAdminUI) ServeHTTP(w http.ResponseWriter, r *http.Request, n
 
 	// get information about the file
 	opF, err := buildFs.Open(filename)
+	var info fs.FileInfo
 	if err != nil {
-		adminUI.logger.Debug("open file error",
+		adminUI.logger.Debug("filename is not exists, try to find with index and suffix",
 			zap.String("error", err.Error()),
+			zap.String("filename", filename),
 			zap.String("File", fmt.Sprintf("%v", opF)),
 			zap.String("FileSystem", fmt.Sprintf("%v", buildFs)))
 		err = mapDirOpenError(err, filename)
 		if os.IsNotExist(err) {
-			var info fs.FileInfo
 			if len(adminUI.IndexNames) > 0 {
 				for _, indexPage := range adminUI.IndexNames {
 					indexPage := repl.ReplaceAll(indexPage, "")
@@ -105,15 +106,15 @@ func (adminUI *CaddyAdminUI) ServeHTTP(w http.ResponseWriter, r *http.Request, n
 					if err != nil {
 						continue
 					}
-					info, _ = opF.Stat()
+					info, err = opF.Stat()
 					filename = indexPath
 					// implicitIndexFile = true
-					adminUI.logger.Debug("located index file", zap.String("filename", filename))
+					adminUI.logger.Debug("located file with index filename", zap.String("filename", filename), zap.String("indexPage", indexPage))
 					break
 				}
 			}
-			if info == nil && strings.HasSuffix(filename, "/") == false {
-				suffixList := []string{"html", "htm", "txt"}
+			if info == nil && !strings.HasSuffix(filename, "/") {
+				suffixList := []string{"html", "htm", "txt", "md"}
 				for _, suffix := range suffixList {
 					suffix := repl.ReplaceAll(suffix, "")
 					filePath := fmt.Sprintf("%s.%s", filename, suffix)
@@ -122,89 +123,24 @@ func (adminUI *CaddyAdminUI) ServeHTTP(w http.ResponseWriter, r *http.Request, n
 					if err != nil {
 						continue
 					}
-					info, _ = opF.Stat()
+					info, err = opF.Stat()
 					filename = filePath
-					// implicitIndexFile = true
-					adminUI.logger.Debug("located file with suffix", zap.String("filename", filename), zap.String("suffix", suffix))
+					adminUI.logger.Debug("located file with suffix filename", zap.String("filename", filename), zap.String("suffix", suffix))
 					break
 				}
 			}
 			if info == nil {
+				adminUI.logger.Debug("open file error",
+					zap.String("error", err.Error()),
+					zap.String("File", fmt.Sprintf("%v", opF)),
+					zap.String("FileSystem", fmt.Sprintf("%v", buildFs)))
 				return adminUI.notFound(w, r, next)
 			}
-		} else if os.IsPermission(err) {
-			return caddyhttp.Error(http.StatusForbidden, err)
 		}
-	}
-	info, err := opF.Stat()
-	if err != nil {
-		return caddyhttp.Error(http.StatusInternalServerError, err)
-	}
-
-	// if the request mapped to a directory, see if
-	// there is an index file we can serve
-	var implicitIndexFile bool
-	if info.IsDir() && len(adminUI.IndexNames) > 0 {
-		for _, indexPage := range adminUI.IndexNames {
-			indexPage := repl.ReplaceAll(indexPage, "")
-			indexPath := caddyhttp.SanitizedPathJoin(filename, indexPage)
-
-			opF, err := buildFs.Open(indexPath)
-			if err != nil {
-				continue
-			}
-			indexInfo, _ := opF.Stat()
-
-			// don't rewrite the request path to append
-			// the index file, because we might need to
-			// do a canonical-URL redirect below based
-			// on the URL as-is
-
-			// we've chosen to use this index file,
-			// so replace the last file info and path
-			// with that of the index file
-			info = indexInfo
-			filename = indexPath
-			implicitIndexFile = true
-			adminUI.logger.Debug("located index file", zap.String("filename", filename))
-			break
-		}
-	}
-
-	// if still referencing a directory, delegate
-	// to browse or return an error
-	if info.IsDir() {
-		adminUI.logger.Debug("no index file in directory",
-			zap.String("path", filename),
-			zap.Strings("index_filenames", adminUI.IndexNames))
-		return adminUI.notFound(w, r, next)
-	}
-
-	// if URL canonicalization is enabled, we need to enforce trailing
-	// slash convention: if a directory, trailing slash; if a file, no
-	// trailing slash - not enforcing this can break relative hrefs
-	// in HTML (see https://github.com/caddyserver/caddy/issues/2741)
-	if info == nil {
-		// Only redirect if the last element of the path (the filename) was not
-		// rewritten; if the admin wanted to rewrite to the canonical path, they
-		// would have, and we have to be very careful not to introduce unwanted
-		// redirects and especially redirect loops!
-		// See https://github.com/caddyserver/caddy/issues/4205.
-		origReq := r.Context().Value(caddyhttp.OriginalRequestCtxKey).(http.Request)
-		if path.Base(origReq.URL.Path) == path.Base(r.URL.Path) {
-			if implicitIndexFile && !strings.HasSuffix(origReq.URL.Path, "/") {
-				to := origReq.URL.Path + "/"
-				adminUI.logger.Debug("redirecting to canonical URI (adding trailing slash for directory)",
-					zap.String("from_path", origReq.URL.Path),
-					zap.String("to_path", to))
-				return redirect(w, r, to)
-			} else if !implicitIndexFile && strings.HasSuffix(origReq.URL.Path, "/") {
-				to := origReq.URL.Path[:len(origReq.URL.Path)-1]
-				adminUI.logger.Debug("redirecting to canonical URI (removing trailing slash for file)",
-					zap.String("from_path", origReq.URL.Path),
-					zap.String("to_path", to))
-				return redirect(w, r, to)
-			}
+	} else {
+		info, err = opF.Stat()
+		if err != nil {
+			return caddyhttp.Error(http.StatusInternalServerError, err)
 		}
 	}
 
@@ -338,18 +274,41 @@ func calculateEtag(d os.FileInfo) string {
 	return `"` + t + "_" + s + `"`
 }
 
-func redirect(w http.ResponseWriter, r *http.Request, to string) error {
-	for strings.HasPrefix(to, "//") {
-		// prevent path-based open redirects
-		to = strings.TrimPrefix(to, "/")
+func getAllFilenames(fs *embed.FS, dir string) (out []string, err error) {
+	if len(dir) == 0 {
+		dir = "."
 	}
-	http.Redirect(w, r, to, http.StatusPermanentRedirect)
-	return nil
+
+	entries, err := fs.ReadDir(dir)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, entry := range entries {
+		fp := path.Join(dir, entry.Name())
+		if entry.IsDir() {
+			res, err := getAllFilenames(fs, fp)
+			if err != nil {
+				return nil, err
+			}
+
+			out = append(out, res...)
+
+			continue
+		}
+
+		out = append(out, fp)
+	}
+
+	return
 }
 
 const (
 	separator = string(filepath.Separator)
 )
+
+//go:embed build/*
+var buildFs embed.FS
 
 // Interface guards
 var (
