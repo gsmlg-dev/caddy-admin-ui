@@ -61,8 +61,8 @@ func (adminUI *CaddyAdminUI) Provision(ctx caddy.Context) error {
 	adminUI.SuffixNames = []string{"html", "htm", "txt"}
 
 	files, err := getAllFilenames(&buildFs, "build")
-	adminUI.logger.Debug("improper path escape",
-		zap.Strings("request_path", files),
+	adminUI.logger.Debug("list files of caddy_admin_ui",
+		zap.Strings("files", files),
 		zap.Error(err))
 
 	return nil
@@ -307,7 +307,7 @@ const (
 	separator = string(filepath.Separator)
 )
 
-//go:embed build/*
+//go:embed all:build/*
 var buildFs embed.FS
 
 // Interface guards
