@@ -22,7 +22,9 @@ Add a http config
 :2022 {
     route {
         caddy_admin_ui
-        reverse_proxy localhost:2021
+        reverse_proxy localhost:2021 {
+            header_up Host localhost:2021
+        }
     }
 }
 ```
