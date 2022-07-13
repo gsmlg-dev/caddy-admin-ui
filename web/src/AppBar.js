@@ -17,8 +17,8 @@ import Link from './Link';
 
 const pages = [
   { name: 'Upstream', href: '/upstream' },
-  { name: 'PKI', href: '/pki' },
-  { name: 'Load', href: '/load' },
+  { name: 'PKI', href: '/pki-view' },
+  { name: 'Load', href: '/setup' },
 ];
 
 const ResponsiveAppBar = () => {
