@@ -20,9 +20,11 @@
     "@mui/icons-material": "latest",
     "@mui/material": "latest",
     "next": "latest",
+    "prismjs": "^1.28.0",
     "prop-types": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-simple-code-editor": "^0.11.2"
   },
   "devDependencies": {
     "@gsmlg/scripts": "^1.16.0",
