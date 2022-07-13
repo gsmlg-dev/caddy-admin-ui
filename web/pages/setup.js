@@ -54,6 +54,11 @@ export default function Load() {
             Caddy Server Load
           </Typography>
           <Typography variant="p" component="p" gutterBottom>
+            <Button variant="outlined" onClick={run}>Reset</Button>
+            {'    '}
+            <Button variant="contained" onClick={save}>Save</Button>
+          </Typography>
+          <Typography variant="p" component="p" gutterBottom>
             <Editor
               onValueChange={handleChange}
               value={config}
@@ -64,11 +69,6 @@ export default function Load() {
                 fontSize: 16,
               }}
             />
-          </Typography>
-          <Typography variant="p" component="p" gutterBottom>
-            <Button variant="outlined" onClick={run}>Reset</Button>
-            {'    '}
-            <Button variant="contained" onClick={save}>Save</Button>
           </Typography>
           <Typography variant="p" component="p" gutterBottom>
             {msg}

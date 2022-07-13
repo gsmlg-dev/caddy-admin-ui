@@ -35,6 +35,7 @@ jobs:
         run: |
           mkdir main
           cp -r web/build main/
+          cp -r screenshots main/
           cp caddy_admin_ui.go go.mod go.sum README.md main/
 
       - name: Deploy 🚀

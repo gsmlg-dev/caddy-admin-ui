@@ -33,3 +33,10 @@ Add a http config
 - Show Upstream
 - Show PKI
 - Load Server Config and Save Config to Server
+
+## Screenshots
+
+![](screenshots/view.jpg)
+![](screenshots/upstream.jpg)
+![](screenshots/pki.jpg)
+![](screenshots/load.jpg)
