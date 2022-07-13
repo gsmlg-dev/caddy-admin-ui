@@ -40,9 +40,6 @@ jobs:
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
-          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ssh-key: ${{ secrets.DEPLOY_KEY }}
           branch: main # The branch the action should deploy to.
           folder: "main" # The folder the action should deploy.
-          token: ${{ secrets.ACCESS_TOKEN }}
 
