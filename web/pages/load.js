@@ -15,16 +15,16 @@ export default function Load() {
   return (
     <>
       <AppBar />
-    <Container maxWidth="xl">
-      <Box sx={{ my: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Caddy Server Load
-        </Typography>
-        <Typography variant="p" component="pre" gutterBottom>
-        </Typography>
-        <Copyright />
-      </Box>
-    </Container>
+      <Container maxWidth="lg">
+        <Box sx={{ my: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Caddy Server Load
+          </Typography>
+          <Typography variant="p" component="pre" gutterBottom>
+          </Typography>
+          <Copyright />
+        </Box>
+      </Container>
     </>
   );
 }

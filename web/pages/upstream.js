@@ -20,21 +20,21 @@ export default function Upstream() {
   return (
     <>
       <AppBar />
-    <Container maxWidth="xl">
-    <Box sx={{ my: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-        Caddy Server Upstream
-        </Typography>
-        <Typography variant="p" component="p" gutterBottom>
-        {upstream.map((u) => {
-            return (
-                <UpstreamCard {...u} />
-            );
-        })}
-        </Typography>
-        <Copyright />
-    </Box>
-    </Container>
+      <Container maxWidth="lg">
+      <Box sx={{ my: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+          Caddy Server Upstream
+          </Typography>
+          <Typography variant="p" component="p" gutterBottom>
+          {upstream.map((u) => {
+              return (
+                  <UpstreamCard {...u} />
+              );
+          })}
+          </Typography>
+          <Copyright />
+      </Box>
+      </Container>
     </>
   );
 }

@@ -28,21 +28,21 @@ export default function Pki() {
   return (
     <>
       <AppBar />
-    <Container maxWidth="xl">
-      <Box sx={{ my: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Caddy Server PKI
-        </Typography>
-        <Typography variant="p" component="p" gutterBottom>
-          {pki.map((p) => {
-              return (
-                  <PKICard {...p} />
-              );
-          })}
-        </Typography>
-        <Copyright />
-      </Box>
-    </Container>
+      <Container maxWidth="lg">
+        <Box sx={{ my: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Caddy Server PKI
+          </Typography>
+          <Typography variant="p" component="p" gutterBottom>
+            {pki.map((p) => {
+                return (
+                    <PKICard {...p} />
+                );
+            })}
+          </Typography>
+          <Copyright />
+        </Box>
+      </Container>
     </>
   );
 }
