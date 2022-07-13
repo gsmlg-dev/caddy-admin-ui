@@ -14,9 +14,7 @@ Add a http config
 
 ```
 {
-        debug
-        admin localhost:2021 {
-        }
+        admin localhost:2021
 }
 
 :2022 {
@@ -29,3 +27,9 @@ Add a http config
 }
 ```
 
+## Feature
+
+1. Show Config
+2. Show Upstream
+3. Show PKI
+4. Load and Set Config
