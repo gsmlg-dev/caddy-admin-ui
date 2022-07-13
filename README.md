@@ -29,7 +29,7 @@ Add a http config
 
 ## Feature
 
-1. Show Config
-2. Show Upstream
-3. Show PKI
-4. Load and Set Config
+- Show Server Config
+- Show Upstream
+- Show PKI
+- Load Server Config and Save Config to Server
