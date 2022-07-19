@@ -22,19 +22,22 @@ export default function ConvertConfig() {
 
   const handleHighlight = React.useCallback((code) => highlight(code, languages.log), []);
 
-  const save = React.useCallback(async (evt) => {
-    const r = new Request('/adapt', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/caddyfile',
-      },
-      body: config,
-    });
-    const resp = await fetch(r);
-    const convertData = await resp.json();
-    console.log(convertData);
-    setParsedConfig(convertData);
-  }, [config]);
+  const save = React.useCallback(
+    async (evt) => {
+      const r = new Request('/adapt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/caddyfile',
+        },
+        body: config,
+      });
+      const resp = await fetch(r);
+      const convertData = await resp.json();
+      console.log(convertData);
+      setParsedConfig(convertData);
+    },
+    [config],
+  );
 
   return (
     <>
@@ -45,7 +48,9 @@ export default function ConvertConfig() {
             Caddy Server Load
           </Typography>
           <Typography variant="p" component="p" gutterBottom>
-            <Button variant="contained" onClick={save}>Convert</Button>
+            <Button variant="contained" onClick={save}>
+              Convert
+            </Button>
           </Typography>
           <Typography variant="p" component="p" gutterBottom>
             <Editor

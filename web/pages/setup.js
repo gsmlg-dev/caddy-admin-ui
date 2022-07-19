@@ -17,12 +17,12 @@ export default function Load() {
   const [msg, setMsg] = React.useState('');
 
   const run = React.useCallback(async () => {
-    const resp = await fetch("/config/");
+    const resp = await fetch('/config/');
     const data = await resp.json();
     setConfig(JSON.stringify(data, null, 2));
     setMsg('');
   }, []);
-  React.useEffect(()=> {
+  React.useEffect(() => {
     run();
   }, []);
 
@@ -30,20 +30,26 @@ export default function Load() {
     setConfig(val);
   }, []);
 
-  const handleHighlight = React.useCallback((code) => highlight(code, languages.json), []);
+  const handleHighlight = React.useCallback(
+    (code) => highlight(code, languages.json),
+    [],
+  );
 
-  const save = React.useCallback(async (evt) => {
-    const r = new Request('/load', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: config,
-    });
-    const resp = await fetch(r);
-    await resp.text();
-    setMsg('Save success!');
-  }, [config]);
+  const save = React.useCallback(
+    async (evt) => {
+      const r = new Request('/load', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: config,
+      });
+      const resp = await fetch(r);
+      await resp.text();
+      setMsg('Save success!');
+    },
+    [config],
+  );
 
   return (
     <>
@@ -54,9 +60,13 @@ export default function Load() {
             Caddy Server Load
           </Typography>
           <Typography variant="p" component="p" gutterBottom>
-            <Button variant="outlined" onClick={run}>Reset</Button>
+            <Button variant="outlined" onClick={run}>
+              Reset
+            </Button>
             {'    '}
-            <Button variant="contained" onClick={save}>Save</Button>
+            <Button variant="contained" onClick={save}>
+              Save
+            </Button>
           </Typography>
           <Typography variant="p" component="p" gutterBottom>
             <Editor

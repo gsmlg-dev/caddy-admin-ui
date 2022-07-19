@@ -8,9 +8,9 @@ import UpstreamCard from '../src/UpstreamCard';
 
 export default function Upstream() {
   const [upstream, setUpstream] = React.useState([]);
-  React.useEffect(()=> {
+  React.useEffect(() => {
     const runU = async () => {
-      const resp = await fetch("/reverse_proxy/upstreams");
+      const resp = await fetch('/reverse_proxy/upstreams');
       const data = await resp.json();
       setUpstream(data);
     };
@@ -21,19 +21,17 @@ export default function Upstream() {
     <>
       <AppBar />
       <Container maxWidth="lg">
-      <Box sx={{ my: 4 }}>
+        <Box sx={{ my: 4 }}>
           <Typography variant="h4" component="h1" gutterBottom>
-          Caddy Server Upstream
+            Caddy Server Upstream
           </Typography>
           <Typography variant="p" component="p" gutterBottom>
-          {upstream.map((u) => {
-              return (
-                  <UpstreamCard {...u} />
-              );
-          })}
+            {upstream.map((u) => {
+              return <UpstreamCard {...u} />;
+            })}
           </Typography>
           <Copyright />
-      </Box>
+        </Box>
       </Container>
     </>
   );

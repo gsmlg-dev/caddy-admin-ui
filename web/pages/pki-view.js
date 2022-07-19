@@ -8,17 +8,17 @@ import PKICard from '../src/PKICard';
 
 export default function Pki() {
   const [pki, setPki] = React.useState([]);
-  React.useEffect(()=> {
+  React.useEffect(() => {
     const run = async () => {
       const resp = await fetch('/config/apps/pki/certificate_authorities');
       const data = await resp.json();
       const caID = Object.keys(data);
       const ca = [];
       for (let i = 0; i < caID.length; i += 1) {
-          const id = caID[i];
-          const resp = await fetch(`/pki/ca/${id}`);
-          const data = await resp.json();
-          ca.push(data);
+        const id = caID[i];
+        const resp = await fetch(`/pki/ca/${id}`);
+        const data = await resp.json();
+        ca.push(data);
       }
       setPki(ca);
     };
@@ -35,9 +35,7 @@ export default function Pki() {
           </Typography>
           <Typography variant="p" component="p" gutterBottom>
             {pki.map((p) => {
-                return (
-                    <PKICard {...p} />
-                );
+              return <PKICard {...p} />;
             })}
           </Typography>
           <Copyright />

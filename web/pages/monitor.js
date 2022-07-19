@@ -20,45 +20,45 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
 const parseMetrics = (txt) => {
-    const lines = txt.split(/\n|\r\n/);
-    const data = {};
-    lines.forEach((line) => {
-        if (/(^\s+)?#/.test(line)) {
-            return;
-        }
-        const [key, value] = line.split(/\s+/);
-        if (!key) return;
-        data[key] = Number(value);
-    });
-    return data;
+  const lines = txt.split(/\n|\r\n/);
+  const data = {};
+  lines.forEach((line) => {
+    if (/(^\s+)?#/.test(line)) {
+      return;
+    }
+    const [key, value] = line.split(/\s+/);
+    if (!key) return;
+    data[key] = Number(value);
+  });
+  return data;
 };
 
 function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-  
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`vertical-tabpanel-${index}`}
-        aria-labelledby={`vertical-tab-${index}`}
-        {...other}
-      >
-        {value === index && (
-          <Box sx={{ p: 3 }}>
-            <Typography>{children}</Typography>
-          </Box>
-        )}
-      </div>
-    );
-  }
-  
-  function a11yProps(index) {
-    return {
-      id: `vertical-tab-${index}`,
-      'aria-controls': `vertical-tabpanel-${index}`,
-    };
-  }
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`vertical-tabpanel-${index}`}
+      aria-labelledby={`vertical-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index) {
+  return {
+    id: `vertical-tab-${index}`,
+    'aria-controls': `vertical-tabpanel-${index}`,
+  };
+}
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -73,10 +73,7 @@ const MenuProps = {
 
 function getSelectedStyles(name, pName) {
   return {
-    fontWeight:
-      pName.indexOf(name) === -1
-        ? 'normal'
-        : '500',
+    fontWeight: pName.indexOf(name) === -1 ? 'normal' : '500',
   };
 }
 
@@ -90,17 +87,17 @@ export default function Monitor() {
   };
 
   const run = React.useCallback(async () => {
-    const resp = await fetch("/metrics");
+    const resp = await fetch('/metrics');
     const data = await resp.text();
     setRawMetrics(data);
     const parsed = parseMetrics(data);
-    const n = [{ time: Date.now(), data: parsed}].concat(metrics).slice(0, 240);
+    const n = [{ time: Date.now(), data: parsed }].concat(metrics).slice(0, 240);
     setMetrics(n);
   }, [metrics]);
-  React.useEffect(()=> {
+  React.useEffect(() => {
     run();
     const t = setInterval(() => {
-        run();
+      run();
     }, 30_000);
     return () => clearInterval(t);
   }, []);
@@ -128,7 +125,14 @@ export default function Monitor() {
           <Typography variant="h4" component="h1" gutterBottom>
             Caddy Server Metrics
           </Typography>
-          <Box sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: 224 }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              bgcolor: 'background.paper',
+              display: 'flex',
+              height: 224,
+            }}
+          >
             <Tabs
               orientation="vertical"
               variant="scrollable"
@@ -142,14 +146,10 @@ export default function Monitor() {
               <Tab label="Metric" {...a11yProps(2)} />
             </Tabs>
             <TabPanel value={value} index={0}>
-              <pre>
-                {rawMetrics}
-              </pre>
+              <pre>{rawMetrics}</pre>
             </TabPanel>
             <TabPanel value={value} index={1}>
-              <pre>
-                {JSON.stringify(metrics[0], null, 4)}
-              </pre>
+              <pre>{JSON.stringify(metrics[0], null, 4)}</pre>
             </TabPanel>
             <TabPanel value={value} index={2}>
               <div>

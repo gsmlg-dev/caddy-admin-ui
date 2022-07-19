@@ -66,7 +66,8 @@ const Link = React.forwardRef(function Link(props, ref) {
   });
 
   const isExternal =
-    typeof href === 'string' && (href.indexOf('http') === 0 || href.indexOf('mailto:') === 0);
+    typeof href === 'string' &&
+    (href.indexOf('http') === 0 || href.indexOf('mailto:') === 0);
 
   if (isExternal) {
     if (noLinkStyle) {
@@ -80,7 +81,9 @@ const Link = React.forwardRef(function Link(props, ref) {
   const nextjsProps = { to: href, linkAs, replace, scroll, shallow, prefetch, locale };
 
   if (noLinkStyle) {
-    return <NextLinkComposed className={className} ref={ref} {...nextjsProps} {...other} />;
+    return (
+      <NextLinkComposed className={className} ref={ref} {...nextjsProps} {...other} />
+    );
   }
 
   return (

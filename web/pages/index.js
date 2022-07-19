@@ -11,9 +11,9 @@ import Copyright from '../src/Copyright';
 
 export default function Index() {
   const [config, setConfig] = React.useState({});
-  React.useEffect(()=> {
+  React.useEffect(() => {
     const run = async () => {
-      const resp = await fetch("/config/");
+      const resp = await fetch('/config/');
       const data = await resp.json();
       setConfig(data);
     };
@@ -25,7 +25,7 @@ export default function Index() {
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded({
       ...expanded,
-      [panel]: isExpanded
+      [panel]: isExpanded,
     });
   };
 
@@ -54,13 +54,18 @@ export default function Index() {
                       Object.keys(subConfig).map((k) => {
                         const subAppsConfig = subConfig[k];
                         return (
-                          <Accordion expanded={expanded[`${key}-${k}`]} onChange={handleChange(`${key}-${k}`)}>
+                          <Accordion
+                            expanded={expanded[`${key}-${k}`]}
+                            onChange={handleChange(`${key}-${k}`)}
+                          >
                             <AccordionSummary
                               expandIcon={<ExpandMoreIcon />}
                               aria-controls={`${k}-content`}
                               id={`as-${k}-header`}
                             >
-                              <Typography sx={{ width: '33%', flexShrink: 0 }}>{k}</Typography>
+                              <Typography sx={{ width: '33%', flexShrink: 0 }}>
+                                {k}
+                              </Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                               <Typography component={'pre'}>

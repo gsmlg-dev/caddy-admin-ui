@@ -4,14 +4,14 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 
 export default function UpstreamCard({
-    // "address": "127.0.0.1:2828",
-    // "healthy": false,
-    // "num_requests": 1,
-    // "fails": 0
-    address,
-    healthy,
-    num_requests,
-    fails,
+  // "address": "127.0.0.1:2828",
+  // "healthy": false,
+  // "num_requests": 1,
+  // "fails": 0
+  address,
+  healthy,
+  num_requests,
+  fails,
 }) {
   return (
     <Card sx={{ minWidth: 275 }}>

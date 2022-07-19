@@ -88,7 +88,12 @@ const ResponsiveAppBar = () => {
             >
               {pages.map((page) => (
                 <MenuItem key={page.name} onClick={handleCloseNavMenu}>
-                  <Link href={page.href} css={css`color: inherit;`}>
+                  <Link
+                    href={page.href}
+                    css={css`
+                      color: inherit;
+                    `}
+                  >
                     <Typography textAlign="center">{page.name}</Typography>
                   </Link>
                 </MenuItem>
@@ -121,7 +126,12 @@ const ResponsiveAppBar = () => {
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                <Link href={page.href} css={css`color: inherit;`}>
+                <Link
+                  href={page.href}
+                  css={css`
+                    color: inherit;
+                  `}
+                >
                   {page.name}
                 </Link>
               </Button>
