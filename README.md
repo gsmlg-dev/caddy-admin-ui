@@ -33,6 +33,7 @@ Add a http config
 - Show Upstream
 - Show PKI
 - Load Server Config and Save Config to Server
+- View Metrics from "/metrics"
 
 ## Screenshots
 
@@ -40,3 +41,4 @@ Add a http config
 ![](screenshots/upstream.jpg)
 ![](screenshots/pki.jpg)
 ![](screenshots/load.jpg)
+![](screenshots/metrics.png)
