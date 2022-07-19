@@ -19,6 +19,8 @@ const pages = [
   { name: 'Upstream', href: '/upstream' },
   { name: 'PKI', href: '/pki-view' },
   { name: 'Load', href: '/setup' },
+  { name: 'Adapt', href: '/convert-config' },
+  { name: 'Metrics', href: '/monitor' },
 ];
 
 const ResponsiveAppBar = () => {

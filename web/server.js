@@ -9,7 +9,7 @@ const handle = app.getRequestHandler();
 
 const apiPaths = {};
 
-const apis = ["load", "stop", "config", "pki", "reverse_proxy"];
+const apis = ['load', 'stop', 'config', 'pki', 'reverse_proxy', 'adapt', 'metrics'];
 
 const simpleRequestLogger = (proxyServer, options) => {
   proxyServer.on('proxyReq', (proxyReq, req, res) => {
