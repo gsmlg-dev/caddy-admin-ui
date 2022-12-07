@@ -14,10 +14,9 @@ const Editor = dynamic(
 export default function ConvertConfig() {
   const [config, setConfig] = React.useState(['caddy.json', 'Caddyfile']);
 
-  const handleChange = React.useCallback((val) => {
-    console.log(val);
+  const handleChange = (val) => {
     setConfig(val);
-  }, []);
+  };
 
   const save = React.useCallback(
     async (evt) => {
@@ -30,8 +29,8 @@ export default function ConvertConfig() {
       });
       const resp = await fetch(r);
       const convertData = await resp.json();
-      console.log(convertData);
-      setConfig([config[0], convertData]);
+
+      setConfig([config[0], JSON.stringify(convertData, null, 2)]);
     },
     [config],
   );
@@ -51,7 +50,7 @@ export default function ConvertConfig() {
           </Typography>
           <Typography variant="p" component="p" gutterBottom>
             <Editor
-              onChange={handleChange}
+              onChange={console.log}
               value={config}
               height={600}
               splits={2}

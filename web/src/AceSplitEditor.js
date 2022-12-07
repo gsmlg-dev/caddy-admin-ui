@@ -5,11 +5,8 @@ import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-dracula";
 import "ace-builds/src-noconflict/ext-language_tools";
 
-function onChange(newValue) {
-  console.log("change", newValue);
-}
-
 const Editor = (props) => {
+  console.log(props);
   return (
     <ParentSize>
       {({ width, height }) => (
@@ -18,13 +15,15 @@ const Editor = (props) => {
           height={height}
           mode="json"
           theme="dracula"
-          onChange={onChange}
+          splits={2}
+          orientation="below"
+          name="UNIQUE_ID_OF_DIV"
           editorProps={{ $blockScrolling: true }}
           {...props}
         />
       )}
     </ParentSize>
-)
+  )
 };
 
 export default Editor;

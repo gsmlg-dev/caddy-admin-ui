@@ -41,7 +41,7 @@ export default function Index() {
             {Object.keys(config).map((key) => {
               const subConfig = config[key];
               return (
-                <Accordion expanded={expanded[key]} onChange={handleChange(key)}>
+                <Accordion key={key} expanded={expanded[key]} onChange={handleChange(key)}>
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls={`${key}-content`}
