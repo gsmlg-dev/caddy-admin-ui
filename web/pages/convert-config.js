@@ -1,26 +1,23 @@
 import * as React from 'react';
+import dynamic from 'next/dynamic';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import TextareaAutosize from '@mui/material/TextareaAutosize';
-import Editor from 'react-simple-code-editor';
-import { highlight, languages } from 'prismjs/components/prism-core';
-import 'prismjs/components/prism-clike';
-import 'prismjs/components/prism-log';
-import 'prismjs/themes/prism.css'; //Example style, you can use another
 import Button from '@mui/material/Button';
 import AppBar from '../src/AppBar';
 import Copyright from '../src/Copyright';
+const Editor = dynamic(
+  () => import("../src/AceSplitEditor"),
+  { ssr: false }
+)
 
 export default function ConvertConfig() {
-  const [config, setConfig] = React.useState('');
-  const [parsedConfig, setParsedConfig] = React.useState();
+  const [config, setConfig] = React.useState(['caddy.json', 'Caddyfile']);
 
   const handleChange = React.useCallback((val) => {
+    console.log(val);
     setConfig(val);
   }, []);
-
-  const handleHighlight = React.useCallback((code) => highlight(code, languages.log), []);
 
   const save = React.useCallback(
     async (evt) => {
@@ -29,12 +26,12 @@ export default function ConvertConfig() {
         headers: {
           'Content-Type': 'text/caddyfile',
         },
-        body: config,
+        body: config[0],
       });
       const resp = await fetch(r);
       const convertData = await resp.json();
       console.log(convertData);
-      setParsedConfig(convertData);
+      setConfig([config[0], convertData]);
     },
     [config],
   );
@@ -54,21 +51,10 @@ export default function ConvertConfig() {
           </Typography>
           <Typography variant="p" component="p" gutterBottom>
             <Editor
-              onValueChange={handleChange}
+              onChange={handleChange}
               value={config}
-              highlight={handleHighlight}
-              padding={10}
-              style={{
-                fontFamily: '"Fira code", "Fira Mono", monospace',
-                fontSize: 16,
-                border: '1px solid #aaa',
-              }}
-            />
-          </Typography>
-          <Typography variant="p" component="p" gutterBottom>
-            <TextareaAutosize
-              style={{ width: '100%' }}
-              value={JSON.stringify(parsedConfig, null, 2)}
+              height={600}
+              splits={2}
             />
           </Typography>
           <Copyright />

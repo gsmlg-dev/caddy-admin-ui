@@ -34,8 +34,8 @@ export default function Pki() {
             Caddy Server PKI
           </Typography>
           <Typography variant="p" component="p" gutterBottom>
-            {pki.map((p) => {
-              return <PKICard {...p} />;
+            {pki.map((p, i) => {
+              return <PKICard key={`n-${i}`} {...p} />;
             })}
           </Typography>
           <Copyright />

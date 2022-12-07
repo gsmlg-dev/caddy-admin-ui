@@ -91,7 +91,7 @@ const ResponsiveAppBar = () => {
                   <Link
                     href={page.href}
                     css={css`
-                      color: inherit;
+                      color: white;
                     `}
                   >
                     <Typography textAlign="center">{page.name}</Typography>
@@ -129,7 +129,7 @@ const ResponsiveAppBar = () => {
                 <Link
                   href={page.href}
                   css={css`
-                    color: inherit;
+                    color: white;
                   `}
                 >
                   {page.name}

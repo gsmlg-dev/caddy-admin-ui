@@ -1,16 +1,15 @@
 import * as React from 'react';
+import dynamic from 'next/dynamic';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import TextareaAutosize from '@mui/material/TextareaAutosize';
-import Editor from 'react-simple-code-editor';
-import { highlight, languages } from 'prismjs/components/prism-core';
-import 'prismjs/components/prism-clike';
-import 'prismjs/components/prism-json';
-import 'prismjs/themes/prism.css'; //Example style, you can use another
 import Button from '@mui/material/Button';
 import AppBar from '../src/AppBar';
 import Copyright from '../src/Copyright';
+const Editor = dynamic(
+  () => import("../src/AceEditor"),
+  { ssr: false }
+)
 
 export default function Load() {
   const [config, setConfig] = React.useState('');
@@ -29,11 +28,6 @@ export default function Load() {
   const handleChange = React.useCallback((val) => {
     setConfig(val);
   }, []);
-
-  const handleHighlight = React.useCallback(
-    (code) => highlight(code, languages.json),
-    [],
-  );
 
   const save = React.useCallback(
     async (evt) => {
@@ -68,16 +62,11 @@ export default function Load() {
               Save
             </Button>
           </Typography>
-          <Typography variant="p" component="p" gutterBottom>
+          <Typography variant="p" component="p" gutterBottom style={{minHeight: 600}}>
             <Editor
-              onValueChange={handleChange}
+              onChange={handleChange}
               value={config}
-              highlight={handleHighlight}
-              padding={10}
-              style={{
-                fontFamily: '"Fira code", "Fira Mono", monospace',
-                fontSize: 16,
-              }}
+              height={600}
             />
           </Typography>
           <Typography variant="p" component="p" gutterBottom>
