@@ -1,0 +1,64 @@
+{
+	admin localhost:2019
+	auto_https off
+	# debug
+	log caddy {
+		output file /tmp/caddy.log {
+			roll_size 200mb
+			roll_keep 10
+			roll_keep_for 9000h
+		}
+		format json
+	}
+  metrics
+}
+
+## admin_ui
+:3300 {
+	log admin_ui {
+		output stdout
+		format filter {
+			wrap console
+			fields {
+				request>headers>Authorization replace <REDACTED>
+			}
+		}
+	}
+
+	header {
+		X-Frame-Options SAMEORIGIN
+		X-Content-Type-Options nosniff
+		X-XSS-Protection "1; mode=block"
+		Content-Security-Policy "default-src 'self' https: wss:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+		Cache-Control "max-age=0, private, must-revalidate"
+		-Alt-Svc
+		-Server
+	}
+
+	route {
+    @admin_path {
+			path /config
+			path /config/*
+      path /reverse_proxy/*
+      path /adapt
+      path /load
+      path /metrics
+		}
+		reverse_proxy @admin_path {
+			to localhost:2019
+			header_up Host localhost:2019
+		}
+
+    @ws_path {
+      path /ws/pty
+      path /ws
+    }
+    reverse_proxy @ws_path {
+      to localhost:8900
+    }
+
+		reverse_proxy {
+      to localhost:3000
+		}
+	}
+}

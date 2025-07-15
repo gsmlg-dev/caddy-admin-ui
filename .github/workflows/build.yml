@@ -7,18 +7,13 @@ jobs:
   build-and-release:
     runs-on: ubuntu-latest
     steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
-        with:
-          access_token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: ⎔ Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: 16
+          node-version: 22
 
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
@@ -34,7 +29,7 @@ jobs:
       - name: 📦 Move build
         run: |
           mkdir main
-          cp -r web/build main/
+          cp -r web/out main/
           cp -r screenshots main/
           cp caddy_admin_ui.go go.mod go.sum README.md main/
 

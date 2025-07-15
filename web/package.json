@@ -1,38 +1,27 @@
 {
-  "name": "caddy-admin-ui",
-  "version": "1.0.0",
+  "name": "@caddy/admin-frontend",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "format": "gsmlg-scripts format src pages server.js next.config.js jest.config.js jsconfig.json",
-    "dev": "next dev",
-    "dev:srv": "NODE_ENV='development' node server.js",
-    "build": "NODE_ENV='production' next build && next export -o build",
+    "dev": "next dev --turbopack",
+    "build": "next build",
     "start": "next start",
-    "lint": "gsmlg-scripts lint pages src",
-    "test": "gsmlg-scripts test"
+    "lint": "next lint"
   },
   "dependencies": {
-    "@emotion/cache": "11",
-    "@emotion/react": "11",
-    "@emotion/server": "11",
-    "@emotion/styled": "11",
-    "@gsmlg/visx": "^1.11.0",
-    "@mui/icons-material": "5",
-    "@mui/material": "5",
-    "ace-builds": "^1.13.1",
-    "next": "13",
-    "prismjs": "^1.29.0",
-    "prop-types": "latest",
-    "react": "18",
-    "react-ace": "^10.1.0",
-    "react-dom": "18",
-    "react-simple-code-editor": "^0.13.1"
+    "@xterm/addon-fit": "^0.10.0",
+    "@xterm/xterm": "^5.5.0",
+    "next": "15.4.1",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
-    "@gsmlg/scripts": "^1.20.1",
-    "eslint": "8.29",
-    "eslint-config-next": "13",
-    "express": "^4.18.2",
-    "http-proxy-middleware": "^2.0.6"
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "24.0.14",
+    "@types/react": "19.1.8",
+    "daisyui": "^5.0.46",
+    "prettier": "3.6.2",
+    "tailwindcss": "^4",
+    "typescript": "5.8.3"
   }
 }
