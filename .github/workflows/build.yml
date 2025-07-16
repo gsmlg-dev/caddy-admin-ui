@@ -10,21 +10,18 @@ jobs:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
 
-      - name: ⎔ Setup node
-        uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
+          bun-version: latest
 
       - name: 📥 Download deps
         working-directory: "web"
         run: |
-          npm install -g npm@latest
-          npm cache clean --force
-          npm install
+          bun install
 
       - name: 🏗 Run build script
         working-directory: "web"
-        run: npm run build
+        run: bun run build
       
       - name: 📦 Move build
         run: |
