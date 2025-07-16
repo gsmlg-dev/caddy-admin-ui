@@ -59,9 +59,6 @@
         shellHook = ''
           figlet -w 120 -f starwars Caddy | lolcat
           figlet -w 120 -f starwars "Admin UI" | lolcat
-
-          source .envrc
-
         '';
       };
     });
