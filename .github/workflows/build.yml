@@ -26,7 +26,7 @@ jobs:
       - name: 📦 Move build
         run: |
           mkdir main
-          cp -r web/out main/
+          cp -r web/out main/build
           cp -r screenshots main/
           cp caddy_admin_ui.go webshell.go go.mod go.sum README.md main/
 
