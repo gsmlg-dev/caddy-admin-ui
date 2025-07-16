@@ -94,7 +94,7 @@ func (adminUI *CaddyAdminUI) ServeHTTP(w http.ResponseWriter, r *http.Request, n
 	}
 
   if adminUI.EnableShell {
-    if r.URL.path == "/ws/pty" {
+    if r.URL.Path == "/ws/pty" {
       return adminUI.handleWsPty(w, r, next)
     }
   }
@@ -271,6 +271,18 @@ func parseCaddyfile(h httpcaddyfile.Helper) (caddyhttp.MiddlewareHandler, error)
 	for h.Next() {
 		for h.NextBlock(0) {
 			switch h.Val() {
+
+			case "enable_shell":
+				if !h.NextArg() {
+					return nil, h.ArgErr()
+				}
+				adminUI.EnableShell = h.Val() == "true"
+
+			case "shell":
+				if !h.NextArg() {
+					return nil, h.ArgErr()
+				}
+				adminUI.Shell = h.Val()
 
 			default:
 				return nil, h.Errf("unknown subdirective '%s'", h.Val())

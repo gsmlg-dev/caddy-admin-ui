@@ -11,12 +11,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: ⎔ Setup node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 22
 
       - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
+        uses: bahmutov/npm-install@v2
         with:
           useLockFile: false
           working-directory: "web"
@@ -38,4 +38,3 @@ jobs:
         with:
           branch: main # The branch the action should deploy to.
           folder: "main" # The folder the action should deploy.
-
