@@ -16,11 +16,8 @@ jobs:
           node-version: 22
 
       - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
-        with:
-          useLockFile: false
-          working-directory: "web"
-          install-command: npm install
+        working-directory: "web"
+        run: npm install
 
       - name: 🏗 Run build script
         working-directory: "web"
@@ -31,7 +28,7 @@ jobs:
           mkdir main
           cp -r web/out main/
           cp -r screenshots main/
-          cp caddy_admin_ui.go go.mod go.sum README.md main/
+          cp caddy_admin_ui.go webshell.go go.mod go.sum README.md main/
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.7.3
