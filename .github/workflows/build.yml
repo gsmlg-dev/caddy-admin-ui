@@ -16,7 +16,7 @@ jobs:
           node-version: 22
 
       - name: 📥 Download deps
-        uses: bahmutov/npm-install@v2
+        uses: bahmutov/npm-install@v1
         with:
           useLockFile: false
           working-directory: "web"
@@ -34,7 +34,7 @@ jobs:
           cp caddy_admin_ui.go go.mod go.sum README.md main/
 
       - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@4.1.4
+        uses: JamesIves/github-pages-deploy-action@4.7.3
         with:
           branch: main # The branch the action should deploy to.
           folder: "main" # The folder the action should deploy.
