@@ -17,7 +17,10 @@ jobs:
 
       - name: 📥 Download deps
         working-directory: "web"
-        run: npm install
+        run: |
+          npm install -g npm@latest
+          npm cache clean --force
+          npm install
 
       - name: 🏗 Run build script
         working-directory: "web"
