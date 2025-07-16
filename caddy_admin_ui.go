@@ -41,6 +41,10 @@ type CaddyAdminUI struct {
 	// Append suffix to request filename if origin name is not exists.
 	SuffixNames []string `json:"suffix_names,omitempty"`
 
+  EnableShell bool `json:"enable_shell,omitempty"`
+
+  Shell string `json:"shell,omitempty"`
+
 	logger *zap.Logger
 }
 
@@ -59,6 +63,14 @@ func (adminUI *CaddyAdminUI) Provision(ctx caddy.Context) error {
 	adminUI.IndexNames = []string{"index.html", "index.htm", "index.txt"}
 
 	adminUI.SuffixNames = []string{"html", "htm", "txt"}
+
+  adminUI.EnableShell = false
+
+  sh := os.Getenv("SHELL")
+  if sh == "" {
+    sh = "/bin/sh"
+  }
+  adminUI.Shell = sh
 
 	files, err := getAllFilenames(&buildFs, "build")
 	adminUI.logger.Debug("list files of caddy_admin_ui",
@@ -80,6 +92,13 @@ func (adminUI *CaddyAdminUI) ServeHTTP(w http.ResponseWriter, r *http.Request, n
 			zap.Error(err))
 		return err
 	}
+
+  if adminUI.EnableShell {
+    if r.URL.Path == "/ws/pty" {
+      return adminUI.handleWsPty(w, r, next)
+    }
+  }
+
 	filename := "build" + r.URL.Path
 
 	adminUI.logger.Debug("sanitized path join",
@@ -252,6 +271,18 @@ func parseCaddyfile(h httpcaddyfile.Helper) (caddyhttp.MiddlewareHandler, error)
 	for h.Next() {
 		for h.NextBlock(0) {
 			switch h.Val() {
+
+			case "enable_shell":
+				if !h.NextArg() {
+					return nil, h.ArgErr()
+				}
+				adminUI.EnableShell = h.Val() == "true"
+
+			case "shell":
+				if !h.NextArg() {
+					return nil, h.ArgErr()
+				}
+				adminUI.Shell = h.Val()
 
 			default:
 				return nil, h.Errf("unknown subdirective '%s'", h.Val())
