@@ -2,3 +2,5 @@
 .envrc
 .idea/
 .semrel/
+out
+package-lock.json
