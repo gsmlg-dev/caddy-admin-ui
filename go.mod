@@ -4,6 +4,8 @@ go 1.24
 
 require (
 	github.com/caddyserver/caddy/v2 v2.10.0
+	github.com/creack/pty v1.1.7
+	github.com/gorilla/websocket v1.5.3
 	go.uber.org/zap v1.27.0
 )
 

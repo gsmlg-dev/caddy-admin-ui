@@ -41,9 +41,9 @@ type CaddyAdminUI struct {
 	// Append suffix to request filename if origin name is not exists.
 	SuffixNames []string `json:"suffix_names,omitempty"`
 
-  EnableShell bool `json:"enable_shell,omitempty"`
+	EnableShell bool `json:"enable_shell,omitempty"`
 
-  Shell string `json:"shell,omitempty"`
+	Shell string `json:"shell,omitempty"`
 
 	logger *zap.Logger
 }
@@ -64,13 +64,13 @@ func (adminUI *CaddyAdminUI) Provision(ctx caddy.Context) error {
 
 	adminUI.SuffixNames = []string{"html", "htm", "txt"}
 
-  adminUI.EnableShell = false
+	adminUI.EnableShell = false
 
-  sh := os.Getenv("SHELL")
-  if sh == "" {
-    sh = "/bin/sh"
-  }
-  adminUI.Shell = sh
+	sh := os.Getenv("SHELL")
+	if sh == "" {
+		sh = "/bin/sh"
+	}
+	adminUI.Shell = sh
 
 	files, err := getAllFilenames(&buildFs, "build")
 	adminUI.logger.Debug("list files of caddy_admin_ui",
@@ -93,11 +93,11 @@ func (adminUI *CaddyAdminUI) ServeHTTP(w http.ResponseWriter, r *http.Request, n
 		return err
 	}
 
-  if adminUI.EnableShell {
-    if r.URL.Path == "/ws/pty" {
-      return adminUI.handleWsPty(w, r, next)
-    }
-  }
+	if adminUI.EnableShell {
+		if r.URL.Path == "/ws/pty" {
+			return adminUI.handleWsPty(w, r, next)
+		}
+	}
 
 	filename := "build" + r.URL.Path
 
@@ -263,8 +263,7 @@ func (fsrv *CaddyAdminUI) notFound(w http.ResponseWriter, r *http.Request, next 
 // parseCaddyfile parses the caddy_admin_ui directive. It enables the static file
 // server and configures it with this syntax:
 //
-//    caddy_admin_ui
-//
+//	caddy_admin_ui
 func parseCaddyfile(h httpcaddyfile.Helper) (caddyhttp.MiddlewareHandler, error) {
 	var adminUI CaddyAdminUI
 

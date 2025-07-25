@@ -1,20 +1,17 @@
-package main
+package caddy_admin_ui
 
 import (
 	"context"
-  "encoding/base64"
-	"flag"
-	"fmt"
+	"encoding/base64"
+                                                            	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/exec"
-	"os/signal"
 	"sync"
-	"syscall"
-	"time"
 
+	"github.com/caddyserver/caddy/v2/modules/caddyhttp"
 	"github.com/creack/pty"
 	"github.com/gorilla/websocket"
 )
@@ -26,12 +23,12 @@ var upgrader = websocket.Upgrader{
 }
 
 type WebShell struct {
-	conn *websocket.Conn
-	ptmx *os.File
-	cmd  *exec.Cmd
-	ctx  context.Context
+	conn   *websocket.Conn
+	ptmx   *os.File
+	cmd    *exec.Cmd
+	ctx    context.Context
 	cancel context.CancelFunc
-	mu   sync.Mutex
+	mu     sync.Mutex
 }
 
 func NewWebShell(conn *websocket.Conn) *WebShell {
@@ -43,10 +40,10 @@ func NewWebShell(conn *websocket.Conn) *WebShell {
 	}
 }
 
-func (ws *WebShell) Start(sh) error {
+func (ws *WebShell) Start(sh string) error {
 	ws.cmd = exec.CommandContext(ws.ctx, sh)
 	ws.cmd.Env = os.Environ()
-	
+
 	// Start the command with PTY
 	var err error
 	ws.ptmx, err = pty.Start(ws.cmd)
@@ -69,7 +66,7 @@ func (ws *WebShell) Start(sh) error {
 
 func (ws *WebShell) readFromPTY() {
 	defer ws.cleanup()
-	
+
 	buf := make([]byte, 1024)
 	for {
 		select {
@@ -83,10 +80,10 @@ func (ws *WebShell) readFromPTY() {
 				}
 				return
 			}
-			
+
 			ws.mu.Lock()
 			if ws.conn != nil {
-			    data := buf[:n]
+				data := buf[:n]
 				dst := make([]byte, base64.StdEncoding.EncodedLen(len(data)))
 				base64.StdEncoding.Encode(dst, data)
 				// fmt.Printf("encode: %v, before: %v", dst, data)
@@ -103,7 +100,7 @@ func (ws *WebShell) readFromPTY() {
 
 func (ws *WebShell) readFromWebSocket() {
 	defer ws.cleanup()
-	
+
 	for {
 		select {
 		case <-ws.ctx.Done():
@@ -162,7 +159,7 @@ func (ws *WebShell) readFromWebSocket() {
 
 func (ws *WebShell) waitForProcess() {
 	defer ws.cleanup()
-	
+
 	if ws.cmd != nil && ws.cmd.Process != nil {
 		ws.cmd.Wait()
 		log.Println("Shell process exited")
@@ -172,21 +169,21 @@ func (ws *WebShell) waitForProcess() {
 func (ws *WebShell) cleanup() {
 	ws.mu.Lock()
 	defer ws.mu.Unlock()
-	
+
 	// Cancel context to stop all goroutines
 	ws.cancel()
-	
+
 	// Close PTY
 	if ws.ptmx != nil {
 		ws.ptmx.Close()
 		ws.ptmx = nil
 	}
-	
+
 	// Kill process if still running
 	if ws.cmd != nil && ws.cmd.Process != nil {
 		ws.cmd.Process.Kill()
 	}
-	
+
 	// Close WebSocket connection
 	if ws.conn != nil {
 		ws.conn.Close()
@@ -195,24 +192,24 @@ func (ws *WebShell) cleanup() {
 }
 
 func (adminUI *CaddyAdminUI) handleWsPty(w http.ResponseWriter, r *http.Request, next caddyhttp.Handler) error {
-  conn, err := upgrader.Upgrade(w, r, nil)
+	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Printf("WebSocket upgrade failed: %v", err)
-		return
+		return nil
 	}
-	
+
 	log.Println("New WebSocket connection established")
-	
+
 	webShell := NewWebShell(conn)
-  sh := adminUI.Shell
+	sh := adminUI.Shell
 	if err := webShell.Start(sh); err != nil {
 		log.Printf("Failed to start web shell: %v", err)
 		conn.Close()
-		return
+		return nil
 	}
-	
+
 	// Keep the connection alive until context is cancelled
 	<-webShell.ctx.Done()
 	log.Println("WebSocket connection closed")
-  return nil
+	return nil
 }
